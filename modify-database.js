@@ -5,11 +5,11 @@ const { logError } = require('./log-error');
 
 // Create a connection to the MySQL database
 const connection = mysql.createConnection({
-  host: process.evn.DATABASE_HOST,
-  user: process.evn.DATABASE_USERNAME,
-  password: process.evn.DATABASE_PASSWORD,
-  database: process.evn.DATABASE_SCHEMA,
-  port: process.evn.DATABASE_PORT,
+  host: process.env.DATABASE_HOST,
+  user: process.env.DATABASE_USERNAME,
+  password: process.env.DATABASE_PASSWORD,
+  database: process.env.DATABASE_SCHEMA,
+  port: process.env.DATABASE_PORT,
 });
 
 const getWeightLossOrderIdsQuery = `
@@ -93,6 +93,7 @@ connection.connect(async (err) => {
         try {
           //assuming that prescription details exist since the main prescription must have 3 months prescription details existing
           //finding subscription template by product id to update the exiting prescription details and insert the next 9 months prescription details
+          await beginTransaction(connection);
           const subscriptionTemplates = await runQuery(getSubscriptionTemplateByProductIdQuery, connection, [mainPrescriptionsArray[j].product_id]);
           if (subscriptionTemplates && subscriptionTemplates.length && subscriptionTemplates.length > 0) {
             //update the existing prescription details
@@ -115,9 +116,11 @@ connection.connect(async (err) => {
               ]);
             }
           }
+          await commitTransaction(connection);
         } catch (error) {
           console.error('Error running query: ', error);
-          logError(mainPrescriptionsArray[i].order_id, error.message)
+          await rollbackTransaction(connection);
+          logError(mainPrescriptionsArray[j].order_id, error.message)
 
         }
       }
@@ -141,6 +144,43 @@ function runQuery(query, connection, params = []) {
 
   })
 }
+
+async function beginTransaction(connection) {
+  return new Promise((resolve, reject) => {
+    connection.beginTransaction((err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
+async function commitTransaction(connection) {
+  return new Promise((resolve, reject) => {
+    connection.commit((err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
+async function rollbackTransaction(connection) {
+  return new Promise((resolve, reject) => {
+    connection.rollback((err) => {
+      if (err) {
+        reject(err);
+      } else {
+        resolve();
+      }
+    });
+  });
+}
+
 
 async function updateExisitngPrescriptionDetails(prescriptionId, subscriptionTemplates) {
   for (let k = 0; k < 3; k++) {
