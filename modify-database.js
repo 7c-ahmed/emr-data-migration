@@ -3,7 +3,6 @@ require('dotenv').config();
 const { v4: uuidv4 } = require('uuid');
 const { logError } = require('./log-error');
 
-
 // Create a connection to the MySQL database
 const connection = mysql.createConnection({
   host: process.evn.DATABASE_HOST,
