@@ -1,6 +1,8 @@
 const mysql = require('mysql');
 require('dotenv').config();
 const { v4: uuidv4 } = require('uuid');
+const { logError } = require('./log-error');
+
 
 // Create a connection to the MySQL database
 const connection = mysql.createConnection({
@@ -69,13 +71,11 @@ connection.connect(async (err) => {
     console.error('Error connecting to database: ', err);
     return;
   }
-  console.log('Connected to database.');
-
 
   try {
     //finding all the orderIds for weight loss category
     const orderIds = (await runQuery(getWeightLossOrderIdsQuery, connection)).map(order => order.orderId);
-    console.log('orderIds', orderIds.length);
+    console.log('Total weightloss items to sync: ', orderIds.length);
     let mainPrescriptionsArray = [];
     //the orders can have multiple prescriptions due to add on products so we need to get the main prescriptions
     if (orderIds && orderIds.length && orderIds.length > 0) {
@@ -88,7 +88,6 @@ connection.connect(async (err) => {
           mainPrescriptionsArray = [...mainPrescriptionsArray, ...mainPrescriptions];
         }
       }
-      console.log('mainPrescriptionsArray', mainPrescriptionsArray.length);
     }
     if (mainPrescriptionsArray && mainPrescriptionsArray.length && mainPrescriptionsArray.length > 0) {
       for (let j = 0; j < mainPrescriptionsArray.length; j++) {
@@ -115,11 +114,12 @@ connection.connect(async (err) => {
                 mainPrescriptionsArray[j].id,
                 null
               ]);
-              console.log("insertResults", insertResults);
             }
           }
         } catch (error) {
           console.error('Error running query: ', error);
+          logError(mainPrescriptionsArray[i].order_id, error.message)
+
         }
       }
     }
