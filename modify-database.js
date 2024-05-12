@@ -24,7 +24,7 @@ const getWeightLossOrderIdsQuery = `
   `;
 
 const getPrescriptionsByOrderIdQuery = `
-  SELECT p.id, p.has_answers, p2.id as product_id, p2.name as product_name, p.order_id
+  SELECT p.id, p.has_answers, p2.id as product_id, p2.name as product_name, p.order_id, p.status_code
   from
   prescriptions p
   inner join products_variants pv on p.variant_id = pv.id
@@ -60,7 +60,12 @@ const insertPrescriptionDetailsQuery = `
 
 const updatePrescriptionDetailsQuery = `
   UPDATE prescription_details
-  SET recomended_variant_id = ?, need_follow_up = ?
+  SET recomended_variant_id = ?, need_follow_up = ?, is_approved = ?
+  WHERE prescription_id = ? and month = ?;`;
+
+const updatePrescriptionDetailsStatusQuery = `
+  UPDATE prescription_details
+  SET status = ?
   WHERE prescription_id = ? and month = ?;`;
 
 
@@ -97,7 +102,7 @@ connection.connect(async (err) => {
           const subscriptionTemplates = await runQuery(getSubscriptionTemplateByProductIdQuery, connection, [mainPrescriptionsArray[j].product_id]);
           if (subscriptionTemplates && subscriptionTemplates.length && subscriptionTemplates.length > 0) {
             //update the existing prescription details
-            await updateExisitngPrescriptionDetails(mainPrescriptionsArray[j].id, subscriptionTemplates);
+            await updateExisitngPrescriptionDetails(mainPrescriptionsArray[j].id, mainPrescriptionsArray[j].status_code, subscriptionTemplates);
             //starting from 3rd index because the first 3 months are already existing in the main prescription
             for (let k = 3; k < subscriptionTemplates.length; k++) {
               const id = uuidv4();
@@ -182,13 +187,19 @@ async function rollbackTransaction(connection) {
 }
 
 
-async function updateExisitngPrescriptionDetails(prescriptionId, subscriptionTemplates) {
+async function updateExisitngPrescriptionDetails(prescriptionId, prescriptionStatusCode, subscriptionTemplates) {
   for (let k = 0; k < 3; k++) {
     const updateResults = await runQuery(updatePrescriptionDetailsQuery, connection, [
       subscriptionTemplates[k].recomended_variant_id,
       subscriptionTemplates[k].need_follow_up,
+      prescriptionStatusCode === 2 ? 1 : 0,
       prescriptionId,
       subscriptionTemplates[k].month_number
     ]);
   }
+  const updateResults = await runQuery(updatePrescriptionDetailsStatusQuery, connection, [
+    prescriptionStatusCode,
+    prescriptionId,
+    subscriptionTemplates[0].month_number
+  ]);
 }
