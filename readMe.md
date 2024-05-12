@@ -18,7 +18,7 @@ Run the following sql commands on database
 - --Semaglutide
 INSERT INTO subscription_template 
 (id, month_number, need_blood_test, need_follow_up, week, variant_id, recomended_variant_id, product_id)
-VALUES('33f00637-80e3-45a9-a01d-fe9164db84dc', '1', 0, 0, '(Weeks 1-4)', '123ba87b-dfc2-4f0d-94a5-2d835c95fe6d', '123ba87b-dfc2-4f0d-94a5-2d835c95fe6d', 'feea4e11-c125-4c24-a235-198ad7aeca74');
+VALUES('33f00637-80e3-45a9-a01d-fe9164db84dc', '1', 0, 1, '(Weeks 1-4)', '123ba87b-dfc2-4f0d-94a5-2d835c95fe6d', '123ba87b-dfc2-4f0d-94a5-2d835c95fe6d', 'feea4e11-c125-4c24-a235-198ad7aeca74');
 
 INSERT INTO subscription_template
 (id, month_number, need_blood_test, need_follow_up, week, variant_id, recomended_variant_id, product_id)
@@ -68,7 +68,7 @@ VALUES('33f00648-80e3-45a9-a01d-fe9164db84dc', '12', 0, 0, '(Weeks 45-48)', '1c7
 
 INSERT INTO subscription_template
 (id, month_number, need_blood_test, need_follow_up, week, variant_id, recomended_variant_id, product_id)
-VALUES('44f00637-80e3-45a9-a01d-fe9164db84dg', '1', 0, 0, '(Weeks 1-4)', '123ba87b-dfc2-4f0d-94a5-2d835c95fc6d', '123ba87b-dfc2-4f0d-94a5-2d835c95fc6d', 'feea4e22-c125-4c24-a235-198ad7aeca74');
+VALUES('44f00637-80e3-45a9-a01d-fe9164db84dg', '1', 0, 1, '(Weeks 1-4)', '123ba87b-dfc2-4f0d-94a5-2d835c95fc6d', '123ba87b-dfc2-4f0d-94a5-2d835c95fc6d', 'feea4e22-c125-4c24-a235-198ad7aeca74');
 
 INSERT INTO subscription_template
 (id, month_number, need_blood_test, need_follow_up, week, variant_id, recomended_variant_id, product_id)
