@@ -1,3 +1,10 @@
+/* 
+  this js file is used to update the prescription details status
+  to approved based on the number of months and order number to 
+  approved as defined in the excel file 
+*/
+
+
 const XLSX = require('xlsx');
 const fs = require('fs');
 const mysql = require('mysql');

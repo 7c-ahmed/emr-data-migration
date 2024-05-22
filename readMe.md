@@ -1,6 +1,16 @@
+# EMR Order Migration Steps
+
+## Step 1: Download Excel File
+
+Fetch and place the excel file containing information regarding orders on root of project
+
+## Step 2: Run script
+
+run migrate-emr-orders.js script to migrate emr orders
+
+
 # EMR Data Migration Steps
 This document contains detailed steps on the migration of emr data to prod along with relevant db scripts.
-
 
 # Steps
 
