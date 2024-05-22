@@ -127,3 +127,13 @@ VALUES('44f00648-80e3-45a9-a01d-fe9164db84dg', '12', 0, 0, '(Weeks 45-48)', '126
 ## Step 3: Execute Nodejs script
 
 Run the nodejs script to add new prescription details for the weight loss orders
+
+# File names and Their purpose
+
+## 1: migrate-emr-orders.js
+
+this js file updates the prescription details status to approved based on the number of months and order number to approved as defined in the excel file 
+
+## 2: modify-database.js
+
+this js file updates the weightloss order to subscriptions and attaches 12 months prescription details to the corresponding order
